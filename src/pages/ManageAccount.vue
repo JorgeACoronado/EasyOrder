@@ -1,0 +1,10 @@
+<template>
+  <main>
+    <RouterLink
+      to="/"
+      class=""
+    >
+      Logout
+    </RouterLink>
+  </main>
+</template>

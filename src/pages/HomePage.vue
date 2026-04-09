@@ -1,5 +1,27 @@
 <script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import SiteFooter from '@/components/SiteFooter.vue'
+
+const router = useRouter()
+
+const name = ref('')
+const phone = ref('')
+
+function startOrder() {
+  const order = {
+    name: name.value,
+    phone: phone.value,
+    curbside: false,
+    counter: false,
+    table: false,
+  }
+
+  router.push({
+    path: '/menu',
+    state: order,
+  })
+}
 </script>
 
 <template>
@@ -8,17 +30,22 @@ import SiteFooter from '@/components/SiteFooter.vue'
       class="flex h-[95dvh] max-h-[800px] w-full max-w-[400px] flex-col overflow-hidden rounded-3xl bg-pink-300 px-6 shadow-2xl"
     >
       <div class="flex-1">
-        <form class="flex flex-col gap-1 pt-10">
+        <form
+          class="flex flex-col gap-1 pt-10"
+          @submit.prevent="startOrder"
+        >
           <h2 class="text-center text-2xl tracking-widest">May's Sweets & Treats</h2>
 
           <label class="mt-10 text-sm font-medium">Name</label>
           <input
+            v-model="name"
             type="text"
             class="h-10 border"
           />
 
           <label class="mt-6 text-sm font-medium">Phone#</label>
           <input
+            v-model="phone"
             type="text"
             class="h-10 border"
           />
@@ -52,7 +79,12 @@ import SiteFooter from '@/components/SiteFooter.vue'
           class="mx-auto mt-15 flex w-3/4 justify-center rounded-lg border bg-white p-2 text-center text-sm font-medium text-black"
           type="submit"
         >
-          Check Order Status
+          <RouterLink
+            to="/status"
+            class="w-full"
+          >
+            Check Order Status
+          </RouterLink>
         </button>
 
         <RouterLink
