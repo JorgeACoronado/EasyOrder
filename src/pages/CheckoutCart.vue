@@ -1,4 +1,8 @@
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 const cartItems = [
   {
     id: 1,
@@ -29,6 +33,10 @@ const cartItems = [
 const subtotal = cartItems.reduce((total, item) => {
   return total + item.price * item.quantity
 }, 0)
+
+function submitPayment() {
+  router.push('/payment')
+}
 </script>
 
 <template>
@@ -122,7 +130,10 @@ const subtotal = cartItems.reduce((total, item) => {
             <span>${{ subtotal.toFixed(2) }}</span>
           </div>
 
-          <button class="mt-4 w-full rounded-full bg-pink-400 px-4 py-3 font-medium text-white">
+          <button
+            class="mt-4 w-full rounded-full bg-pink-400 px-4 py-3 font-medium text-white"
+            @click="submitPayment()"
+          >
             Proceed to Checkout
           </button>
         </div>
