@@ -25,63 +25,65 @@ function startOrder() {
 </script>
 
 <template>
-  <main class="flex min-h-screen items-center justify-center bg-pink-50 p-6">
-    <div
-      class="flex h-[95dvh] max-h-[800px] w-full max-w-[400px] flex-col overflow-hidden rounded-3xl bg-pink-300 px-6 shadow-2xl"
-    >
-      <div class="flex-1">
+  <main class="min-h-screen bg-[#f6efeb]">
+    <div class="mx-auto w-full max-w-[420px] px-3 py-4">
+      <div
+        class="flex min-h-[85vh] flex-col rounded-3xl border border-stone-200 bg-white px-5 py-6 shadow-sm"
+      >
         <form
-          class="flex flex-col gap-1 pt-10"
+          class="flex flex-col gap-2 pt-10"
           @submit.prevent="startOrder"
         >
-          <h2 class="text-center text-2xl tracking-widest">May's Sweets & Treats</h2>
+          <h2 class="text-center font-serif text-2xl tracking-widest text-stone-700">
+            May's Sweets & Treats
+          </h2>
 
-          <label class="mt-10 text-sm font-medium">Name</label>
+          <label class="mt-10 text-sm text-stone-500">Name</label>
           <input
             v-model="name"
             type="text"
-            class="h-10 border"
+            class="mt-1 h-11 w-full rounded-xl border border-stone-300 px-3 outline-none focus:ring-2 focus:ring-pink-300"
           />
 
-          <label class="mt-6 text-sm font-medium">Phone#</label>
+          <label class="mt-6 text-sm text-stone-500">Phone#</label>
           <input
             v-model="phone"
             type="text"
-            class="h-10 border"
+            class="mt-1 h-11 w-full rounded-xl border border-stone-300 px-3 outline-none focus:ring-2 focus:ring-pink-300"
           />
 
           <div class="mt-6 flex w-full items-center justify-between">
-            <label class="flex items-center gap-1">
+            <label class="flex items-center gap-1 text-sm text-stone-700">
               <input type="checkbox" />
-              <span class="text-sm tracking-widest">Curbside</span>
+              <span class="tracking-widest">Curbside</span>
             </label>
 
-            <label class="flex items-center gap-1">
+            <label class="flex items-center gap-1 text-sm text-stone-700">
               <input type="checkbox" />
-              <span class="text-sm tracking-widest">Counter</span>
+              <span class="tracking-widest">Counter</span>
             </label>
 
-            <label class="flex items-center gap-1">
+            <label class="flex items-center gap-1 text-sm text-stone-700">
               <input type="checkbox" />
-              <span class="text-sm tracking-widest">Table</span>
+              <span class="tracking-widest">Table</span>
             </label>
           </div>
 
           <button
             type="submit"
-            class="mt-6 w-1/4 rounded-lg border bg-pink-500 p-2 text-xs font-medium text-white"
+            class="mt-6 w-1/4 rounded-full bg-pink-400 py-2 text-xs font-medium text-white"
           >
             Start Order
           </button>
         </form>
 
         <button
-          class="mx-auto mt-15 flex w-3/4 justify-center rounded-lg border bg-white p-2 text-center text-sm font-medium text-black"
-          type="submit"
+          class="mx-auto mt-16 flex w-3/4 justify-center rounded-full border border-pink-300 bg-white py-3 text-sm text-stone-700"
+          type="button"
         >
           <RouterLink
             to="/status"
-            class="w-full"
+            class="w-full text-center"
           >
             Check Order Status
           </RouterLink>
@@ -89,8 +91,9 @@ function startOrder() {
 
         <RouterLink
           to="/login"
-          class="mt-15 flex justify-center text-sm text-gray-500 underline-offset-4 transition-colors duration-200 hover:text-gray-700 hover:underline"
-          >Account Login
+          class="mt-16 flex justify-center text-sm text-stone-400 hover:underline"
+        >
+          Account Login
         </RouterLink>
       </div>
 

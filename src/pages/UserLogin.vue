@@ -22,54 +22,64 @@ function Login() {
 </script>
 
 <template>
-  <main class="flex min-h-screen flex-col items-center space-y-6 p-6">
-    <h1 class="flex justify-center text-3xl font-bold">EasyOrder</h1>
-    <div class="space-y-2 rounded-lg bg-amber-100 p-6 shadow-md">
-      <h2 class="text-lg font-medium">Admin Login</h2>
-      <div>
+  <main class="min-h-screen bg-[#f6efeb] px-4 py-6">
+    <div class="mx-auto w-full max-w-[400px] space-y-6">
+      <!-- Title -->
+      <h1 class="text-center font-serif text-3xl text-stone-700">EasyOrder</h1>
+
+      <!-- Card -->
+      <div class="rounded-3xl bg-white p-6 shadow-md">
+        <h2 class="mb-6 text-center font-serif text-xl text-stone-700">Admin Login</h2>
+
         <form
-          class="space-y-6"
+          class="space-y-5"
           @submit.prevent="Login"
         >
-          <label class="">
-            <span class="text-sm font-medium">Username</span>
+          <!-- Username -->
+          <div>
+            <label class="text-sm text-stone-500">Username</label>
             <input
               v-model="username"
               type="text"
-              class="h-10 w-full border"
+              class="mt-1 w-full rounded-xl border border-stone-300 p-3 outline-none focus:ring-2 focus:ring-pink-300"
             />
-          </label>
+          </div>
 
-          <label class="">
-            <span class="text-sm font-medium">Password</span>
+          <div>
+            <label class="text-sm text-stone-500">Password</label>
             <input
               v-model="password"
               type="password"
-              class="h-10 w-full border"
+              class="mt-1 w-full rounded-xl border border-stone-300 p-3 outline-none focus:ring-2 focus:ring-pink-300"
             />
-          </label>
+          </div>
 
           <button
             type="submit"
-            class="mt-6 w-full rounded-lg border bg-pink-500 p-2 text-xs font-medium text-white"
+            class="mt-4 w-full rounded-full bg-pink-400 py-3 text-white"
           >
-            Login
+            Log In
           </button>
 
-          <RouterLink
-            to="/create-user"
-            class="block text-center text-sm text-gray-500 underline-offset-4 transition-colors duration-200 hover:text-gray-700 hover:underline"
-          >
-            Create A Username
-          </RouterLink>
+          <div class="space-y-2 text-center text-sm">
+            <RouterLink
+              to="/create-user"
+              class="text-m mt-4 block text-stone-500 underline hover:underline"
+            >
+              Create an account
+            </RouterLink>
+
+            <RouterLink
+              to="/"
+              class="mt-6 block text-stone-400 hover:underline"
+            >
+              Back to home
+            </RouterLink>
+          </div>
         </form>
       </div>
     </div>
-    <RouterLink
-      to="/"
-      class="block self-start text-sm text-gray-300 underline-offset-4 transition-colors duration-200 hover:text-[#4cc9f0] hover:underline"
-      >👈 Back to home
-    </RouterLink>
   </main>
+
   <SiteFooter class="pb-6" />
 </template>
