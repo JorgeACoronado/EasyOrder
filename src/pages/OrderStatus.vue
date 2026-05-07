@@ -1,6 +1,16 @@
 <script setup>
-const completedOrders = ['#1001', '#1002', '#1010', '#1020']
-const inProgressOrders = ['#1027', '#1051', '#1066', '#1003']
+import { computed } from 'vue'
+import { useCustomerStore } from '@/stores/customerStore'
+
+const customerStore = useCustomerStore()
+
+const completedOrders = computed(() => {
+  return customerStore.orders.filter((order) => order.status === 'completed')
+})
+
+const inProgressOrders = computed(() => {
+  return customerStore.orders.filter((order) => order.status === 'in-progress')
+})
 </script>
 
 <template>
@@ -22,13 +32,20 @@ const inProgressOrders = ['#1027', '#1051', '#1066', '#1003']
       <section class="mb-6 rounded-[22px] bg-white p-4 shadow-md">
         <h2 class="mb-4 font-serif text-4xl text-green-500">Completed</h2>
 
+        <div
+          v-if="completedOrders.length === 0"
+          class="text-sm text-stone-400"
+        >
+          No completed orders yet.
+        </div>
+
         <div class="flex flex-wrap gap-4">
           <span
             v-for="order in completedOrders"
-            :key="order"
+            :key="order.order_number"
             class="rounded-xl bg-green-100 px-5 py-3 text-xl text-green-700"
           >
-            {{ order }}
+            #{{ order.order_number }}
           </span>
         </div>
       </section>
@@ -36,13 +53,20 @@ const inProgressOrders = ['#1027', '#1051', '#1066', '#1003']
       <section class="rounded-[22px] bg-white p-4 shadow-md">
         <h2 class="mb-4 font-serif text-4xl text-amber-400">In Progress</h2>
 
+        <div
+          v-if="inProgressOrders.length === 0"
+          class="text-sm text-stone-400"
+        >
+          No orders in progress.
+        </div>
+
         <div class="flex flex-wrap gap-4">
           <span
             v-for="order in inProgressOrders"
-            :key="order"
+            :key="order.order_number"
             class="rounded-xl bg-orange-50 px-5 py-3 text-xl text-orange-500"
           >
-            {{ order }}
+            #{{ order.order_number }}
           </span>
         </div>
       </section>

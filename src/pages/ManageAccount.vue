@@ -57,7 +57,7 @@ function logout() {
           </RouterLink>
 
           <RouterLink
-            to="/order-status"
+            to="/status"
             class="rounded-2xl bg-green-100 px-4 py-3 text-center text-stone-700"
           >
             View Public Order Status

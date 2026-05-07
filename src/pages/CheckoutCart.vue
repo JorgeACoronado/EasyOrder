@@ -1,15 +1,21 @@
 <script setup>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useOrderStore } from '@/stores/orderStore'
+import { useCustomerStore } from '@/stores/customerStore'
 
 const router = useRouter()
 const orderStore = useOrderStore()
+const customerStore = useCustomerStore()
 
-const subtotal = orderStore.cart.reduce((total, item) => {
-  return total + item.price * item.quantity
-}, 0)
+const subtotal = computed(() => {
+  return orderStore.cart.reduce((total, item) => {
+    return total + item.price * item.quantity
+  }, 0)
+})
 
-function submitPayment() {
+function goToPayment() {
+  customerStore.subtotal = subtotal.value
   router.push('/payment')
 }
 </script>
@@ -93,6 +99,7 @@ function submitPayment() {
         <div class="mt-4 border-t pt-4">
           <label class="mb-2 block text-sm font-medium text-stone-700">Order Notes</label>
           <textarea
+            v-model="customerStore.notes"
             rows="3"
             class="w-full rounded-2xl border border-stone-300 p-3 text-sm outline-none"
             placeholder="Add pickup notes, allergies, or special instructions..."
@@ -104,10 +111,13 @@ function submitPayment() {
             <span>Subtotal</span>
             <span>${{ subtotal.toFixed(2) }}</span>
           </div>
+          <div>
+            <span class="text-sm text-stone-500">Taxes calculated at checkout</span>
+          </div>
 
           <button
             class="mt-4 w-full rounded-full bg-pink-400 px-4 py-3 font-medium text-white"
-            @click="submitPayment()"
+            @click="goToPayment()"
           >
             Proceed to Checkout
           </button>

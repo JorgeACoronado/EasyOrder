@@ -2,9 +2,19 @@ import { defineStore } from 'pinia'
 
 export const useCustomerStore = defineStore('customer', {
   state: () => ({
+    orders: [],
     customer_name: '',
     customer_phone: '',
     selected_payment_method: 'counter',
+
+    status: 'pending',
+
+    notes: '',
+
+    subtotal: 0,
+    tax: 0,
+    fees: 0,
+    total: 0,
 
     current_order_number: 1,
     order_number: null,
@@ -24,6 +34,10 @@ export const useCustomerStore = defineStore('customer', {
       this.customer_name = ''
       this.customer_phone = ''
       this.selected_payment_method = 'counter'
+      this.status = 'pending'
+      this.notes = ''
+      this.total = 0
+      this.order_number = null
     },
 
     generateOrderNumber() {
@@ -34,6 +48,19 @@ export const useCustomerStore = defineStore('customer', {
       }
 
       this.order_number = this.current_order_number
+    },
+
+    submitOrder() {
+      this.generateOrderNumber()
+
+      this.orders.push({
+        order_number: this.order_number,
+        status: 'in-progress',
+        total: this.total,
+        notes: this.notes,
+        customer_name: this.customer_name,
+        created_at: new Date().toISOString(),
+      })
     },
   },
 
