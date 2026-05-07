@@ -2,24 +2,30 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import SiteFooter from '@/components/SiteFooter.vue'
+import { useCustomerStore } from '@/stores/customerStore'
 
 const router = useRouter()
+const customerStore = useCustomerStore()
 
-const name = ref('')
-const phone = ref('')
+const customerName = ref('')
+const customerPhone = ref('')
 
-function startOrder() {
-  const order = {
-    name: name.value,
-    phone: phone.value,
-    curbside: false,
-    counter: false,
-    table: false,
+function startCustomerOrder() {
+  //Generate order number
+  customerStore.generateOrderNumber()
+
+  //saving info into store
+  customerStore.setCustomerInfo(customerName.value, customerPhone.value)
+
+  //check the state of the store
+  if (!customerStore.isCustomerValid) {
+    alert('Please enter a valid name and phone number.')
+    return
   }
 
+  //push info to the menu page
   router.push({
     path: '/menu',
-    state: order,
   })
 }
 </script>
@@ -32,7 +38,7 @@ function startOrder() {
       >
         <form
           class="flex flex-col gap-2 pt-10"
-          @submit.prevent="startOrder"
+          @submit.prevent="startCustomerOrder"
         >
           <h2 class="text-center font-serif text-2xl tracking-widest text-stone-700">
             May's Sweets & Treats
@@ -40,34 +46,34 @@ function startOrder() {
 
           <label class="mt-10 text-sm text-stone-500">Name</label>
           <input
-            v-model="name"
+            v-model="customerName"
             type="text"
             class="mt-1 h-11 w-full rounded-xl border border-stone-300 px-3 outline-none focus:ring-2 focus:ring-pink-300"
           />
 
           <label class="mt-6 text-sm text-stone-500">Phone#</label>
           <input
-            v-model="phone"
+            v-model="customerPhone"
             type="text"
             class="mt-1 h-11 w-full rounded-xl border border-stone-300 px-3 outline-none focus:ring-2 focus:ring-pink-300"
           />
 
-          <div class="mt-6 flex w-full items-center justify-between">
+          <!-- <div class="mt-6 flex w-full items-center justify-between">
             <label class="flex items-center gap-1 text-sm text-stone-700">
               <input type="checkbox" />
               <span class="tracking-widest">Curbside</span>
-            </label>
+            </label> -->
 
-            <label class="flex items-center gap-1 text-sm text-stone-700">
+          <!-- <label class="flex items-center gap-1 text-sm text-stone-700">
               <input type="checkbox" />
               <span class="tracking-widest">Counter</span>
-            </label>
+            </label> -->
 
-            <label class="flex items-center gap-1 text-sm text-stone-700">
+          <!-- <label class="flex items-center gap-1 text-sm text-stone-700">
               <input type="checkbox" />
               <span class="tracking-widest">Table</span>
             </label>
-          </div>
+          </div> -->
 
           <button
             type="submit"

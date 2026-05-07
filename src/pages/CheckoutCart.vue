@@ -1,36 +1,11 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { useOrderStore } from '@/stores/orderStore'
 
 const router = useRouter()
+const orderStore = useOrderStore()
 
-const cartItems = [
-  {
-    id: 1,
-    name: 'Chocolate Croissant',
-    price: 3.5,
-    quantity: 2,
-    image:
-      'https://images.unsplash.com/photo-1555507036-ab794f4ade0a?w=500&auto=format&fit=crop&q=60',
-  },
-  {
-    id: 2,
-    name: 'Strawberry Cream Danish',
-    price: 4.25,
-    quantity: 1,
-    image:
-      'https://images.unsplash.com/photo-1519869325930-281384150729?w=500&auto=format&fit=crop&q=60',
-  },
-  {
-    id: 3,
-    name: 'Carrot Cake',
-    price: 5.0,
-    quantity: 1,
-    image:
-      'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&auto=format&fit=crop&q=60',
-  },
-]
-
-const subtotal = cartItems.reduce((total, item) => {
+const subtotal = orderStore.cart.reduce((total, item) => {
   return total + item.price * item.quantity
 }, 0)
 
@@ -50,14 +25,14 @@ function submitPayment() {
 
         <div class="flex-1 space-y-4 overflow-y-auto">
           <div
-            v-if="cartItems.length === 0"
+            v-if="orderStore.cart.length === 0"
             class="rounded-2xl bg-stone-100 p-4 text-center text-stone-500"
           >
             Your cart is empty
           </div>
 
           <article
-            v-for="item in cartItems"
+            v-for="item in orderStore.cart"
             :key="item.id"
             class="rounded-2xl border border-stone-200 p-3"
           >

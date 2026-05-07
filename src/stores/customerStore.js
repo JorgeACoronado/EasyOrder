@@ -5,6 +5,9 @@ export const useCustomerStore = defineStore('customer', {
     customer_name: '',
     customer_phone: '',
     selected_payment_method: 'counter',
+
+    current_order_number: 1,
+    order_number: null,
   }),
 
   actions: {
@@ -21,6 +24,16 @@ export const useCustomerStore = defineStore('customer', {
       this.customer_name = ''
       this.customer_phone = ''
       this.selected_payment_method = 'counter'
+    },
+
+    generateOrderNumber() {
+      this.current_order_number += 1
+
+      if (this.current_order_number > 999) {
+        this.current_order_number = 1
+      }
+
+      this.order_number = this.current_order_number
     },
   },
 
