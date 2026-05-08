@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const name = ref('')
 const email = ref('')
@@ -11,6 +13,17 @@ const password = ref('')
 const userCreated = ref(false)
 
 function createUser() {
+  const result = authStore.createUser({
+    name: name.value,
+    email: email.value,
+    password: password.value,
+  })
+
+  if (!result.success) {
+    alert(result.message)
+    return
+  }
+
   userCreated.value = true
 }
 

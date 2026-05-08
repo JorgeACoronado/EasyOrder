@@ -1,23 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import SiteFooter from '@/components/SiteFooter.vue'
+import { useAuthStore } from '@/stores/authStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
-const username = ref('')
+const email = ref('')
 const password = ref('')
 
-function Login() {
-  const account = {
-    username: username.value,
-    password: password.value,
+function submitLogin() {
+  const success = authStore.login(email.value, password.value)
+
+  if (!success) {
+    alert('Invalid username or password')
+    return
   }
 
-  router.push({
-    path: '/management',
-    state: account,
-  })
+  password.value = ''
+  router.push('/management')
 }
 </script>
 
@@ -33,14 +34,14 @@ function Login() {
 
         <form
           class="space-y-5"
-          @submit.prevent="Login"
+          @submit.prevent="submitLogin"
         >
-          <!-- Username -->
+          <!-- Email -->
           <div>
-            <label class="text-sm text-stone-500">Username</label>
+            <label class="text-sm text-stone-500">Email</label>
             <input
-              v-model="username"
-              type="text"
+              v-model="email"
+              type="email"
               class="mt-1 w-full rounded-xl border border-stone-300 p-3 outline-none focus:ring-2 focus:ring-pink-300"
             />
           </div>

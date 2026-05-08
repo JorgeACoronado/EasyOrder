@@ -1,16 +1,18 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const owner = {
-  name: 'May Coronado',
-  email: 'may@example.com',
+  name: authStore.currentUser?.name || 'May Chen',
+  email: authStore.currentUser?.email || 'may@example.com',
   businessName: "May's Sweets & Treats",
 }
 
 function logout() {
-  router.push('/')
+  router.push('/login')
 }
 </script>
 
