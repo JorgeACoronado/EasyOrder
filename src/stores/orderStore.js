@@ -11,6 +11,10 @@ export const useOrderStore = defineStore('order', {
         return total + item.quantity
       }, 0)
     },
+
+    isCartEmpty: (state) => {
+      return state.cart.length === 0
+    },
   },
 
   actions: {
@@ -25,6 +29,30 @@ export const useOrderStore = defineStore('order', {
           quantity: 1,
         })
       }
+    },
+
+    increaseQuantity(id) {
+      const item = this.cart.find((item) => item.id === id)
+
+      if (item) {
+        item.quantity++
+      }
+    },
+
+    decreaseQuantity(id) {
+      const item = this.cart.find((item) => item.id === id)
+
+      if (item) {
+        if (item.quantity > 1) {
+          item.quantity--
+        } else {
+          this.removeFromCart(id)
+        }
+      }
+    },
+
+    removeFromCart(id) {
+      this.cart = this.cart.filter((item) => item.id !== id)
     },
   },
 })

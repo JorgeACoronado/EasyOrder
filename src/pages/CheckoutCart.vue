@@ -15,6 +15,11 @@ const subtotal = computed(() => {
 })
 
 function goToPayment() {
+  if (orderStore.isCartEmpty) {
+    alert('Your cart is empty. Please add items before proceeding to checkout.')
+    return
+  }
+
   customerStore.subtotal = subtotal.value
   router.push('/payment')
 }
@@ -61,6 +66,7 @@ function goToPayment() {
                   <div class="flex items-center gap-2">
                     <button
                       class="flex h-8 w-8 items-center justify-center rounded-full bg-stone-200 text-stone-800"
+                      @click="orderStore.decreaseQuantity(item.id)"
                     >
                       -
                     </button>
@@ -71,12 +77,18 @@ function goToPayment() {
 
                     <button
                       class="flex h-8 w-8 items-center justify-center rounded-full bg-pink-400 text-white"
+                      @click="orderStore.increaseQuantity(item.id)"
                     >
                       +
                     </button>
                   </div>
 
-                  <button class="text-sm text-rose-500">Remove</button>
+                  <button
+                    class="text-sm text-rose-500"
+                    @click="orderStore.removeFromCart(item.id)"
+                  >
+                    Remove
+                  </button>
                 </div>
               </div>
             </div>
@@ -87,12 +99,19 @@ function goToPayment() {
           </article>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-4 flex items-center justify-between">
           <RouterLink
             to="/menu"
             class="text-sm text-pink-500 underline"
           >
             + Add more items
+          </RouterLink>
+
+          <RouterLink
+            to="/"
+            class="text-sm text-pink-500 underline"
+          >
+            Cancel
           </RouterLink>
         </div>
 
