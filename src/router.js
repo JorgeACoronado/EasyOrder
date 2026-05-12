@@ -48,6 +48,11 @@ const routes = [
     name: 'Payment',
     component: () => import('@/pages/PaySubmit.vue'),
   },
+  {
+    path: '/business-settings',
+    name: 'Business-Settings',
+    component: () => import('@/pages/BusinessSettings.vue'),
+  },
 ]
 
 const router = createRouter({

@@ -45,7 +45,7 @@ function logout() {
 
         <div class="grid gap-3">
           <RouterLink
-            to="/settings"
+            to="/business-settings"
             class="rounded-2xl bg-pink-100 px-4 py-3 text-center text-stone-700"
           >
             Edit Business Settings
