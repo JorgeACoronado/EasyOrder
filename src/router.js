@@ -59,7 +59,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/view-orders',
+    path: '/viewOrders',
     name: 'ViewOrders',
     component: () => import('@/pages/ViewOrders.vue'),
     meta: { requiresAuth: true },

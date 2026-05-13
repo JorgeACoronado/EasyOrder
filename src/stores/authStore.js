@@ -1,9 +1,24 @@
 import { defineStore } from 'pinia'
 import { loginUser, registerUser } from '@/services/api'
 
+function getStoredUser() {
+  try {
+    const storedUser = localStorage.getItem('currentUser')
+
+    if (!storedUser || storedUser === 'undefined') {
+      return null
+    }
+
+    return JSON.parse(storedUser)
+  } catch {
+    localStorage.removeItem('currentUser')
+    return null
+  }
+}
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    currentUser: JSON.parse(localStorage.getItem('currentUser') || 'null'),
+    currentUser: getStoredUser(),
     accessToken: localStorage.getItem('accessToken'),
   }),
 
@@ -36,7 +51,10 @@ export const useAuthStore = defineStore('auth', {
         this.currentUser = data.user
         this.accessToken = data.accessToken
 
-        localStorage.setItem('currentUser', JSON.stringify(data.user))
+        if (data.user) {
+          localStorage.setItem('currentUser', JSON.stringify(data.user))
+        }
+
         localStorage.setItem('accessToken', data.accessToken)
 
         return true

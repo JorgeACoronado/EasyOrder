@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue'
+import SiteFooter from '@/components/SiteFooter.vue'
 import { useRouter } from 'vue-router'
-import { loginUser } from '@/services/api'
+import { useAuthStore } from '@/stores/authStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
@@ -15,14 +17,20 @@ async function submitLogin() {
   isLoading.value = true
 
   try {
-    await loginUser(email.value, password.value)
+    const success = await authStore.login(email.value, password.value)
+
+    if (!success) {
+      errorMessage.value = 'Invalid email or password.'
+      return
+    }
 
     password.value = ''
+
     router.push('/management')
   } catch (error) {
     console.error(error)
-    errorMessage.value =
-      error?.error?.message || error?.message || 'Login failed. Check your email and password.'
+
+    errorMessage.value = error?.error?.message || error?.message || 'Login failed.'
   } finally {
     isLoading.value = false
   }
