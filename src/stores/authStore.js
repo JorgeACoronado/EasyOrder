@@ -1,49 +1,58 @@
 import { defineStore } from 'pinia'
+import { loginUser, registerUser } from '@/services/api'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    users: [],
-    currentUser: null,
-    isLoggedIn: false,
+    currentUser: JSON.parse(localStorage.getItem('currentUser') || 'null'),
+    accessToken: localStorage.getItem('accessToken'),
   }),
 
-  actions: {
-    createUser(userData) {
-      const existingUser = this.users.find((user) => user.email === userData.email)
+  getters: {
+    isLoggedIn: (state) => !!state.accessToken,
+  },
 
-      if (existingUser) {
+  actions: {
+    async createUser(userData) {
+      try {
+        const result = await registerUser(userData.name, userData.email, userData.password)
+
+        return {
+          success: true,
+          message: 'Account created',
+          data: result.data,
+        }
+      } catch (error) {
         return {
           success: false,
-          message: 'Email already exists',
+          message: error?.message || 'Could not create account',
         }
-      }
-
-      this.users.push(userData)
-
-      return {
-        success: true,
-        message: 'Account created',
       }
     },
 
-    login(email, password) {
-      const foundUser = this.users.find(
-        (user) => user.email === email && user.password === password,
-      )
+    async login(email, password) {
+      try {
+        const data = await loginUser(email, password)
 
-      if (!foundUser) {
+        this.currentUser = data.user
+        this.accessToken = data.accessToken
+
+        localStorage.setItem('currentUser', JSON.stringify(data.user))
+        localStorage.setItem('accessToken', data.accessToken)
+
+        return true
+      } catch (error) {
+        console.error(error)
         return false
       }
-
-      this.currentUser = foundUser
-      this.isLoggedIn = true
-
-      return true
     },
 
     logout() {
       this.currentUser = null
-      this.isLoggedIn = false
+      this.accessToken = null
+
+      localStorage.removeItem('currentUser')
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
     },
   },
 })
