@@ -6,13 +6,14 @@ function getToken() {
 
 export async function apiFetch(path, options = {}) {
   const token = getToken()
+  const requiresAuth = options.requiresAuth ?? false
 
   const headers = {
     'Content-Type': 'application/json',
     ...(options.headers || {}),
   }
 
-  if (token) {
+  if (requiresAuth && token) {
     headers.Authorization = `Bearer ${token}`
   }
 
@@ -49,24 +50,31 @@ export async function registerUser(name, email, password) {
   })
 }
 
+// This is a public customer route
 export async function getMenuItems() {
   return apiFetch('/menu-items')
 }
 
-export async function getOrders() {
-  return apiFetch('/orders')
-}
-
-export async function createMenuItem(item) {
-  return apiFetch('/menu-items', {
-    method: 'POST',
-    body: JSON.stringify(item),
-  })
-}
-
+// This is a public customer route
 export async function createOrder(order) {
   return apiFetch('/orders', {
     method: 'POST',
     body: JSON.stringify(order),
+  })
+}
+
+// This is a protected admin route
+export async function getOrders() {
+  return apiFetch('/orders', {
+    requiresAuth: true,
+  })
+}
+
+// This is a protected admin route
+export async function createMenuItem(item) {
+  return apiFetch('/menu-items', {
+    method: 'POST',
+    body: JSON.stringify(item),
+    requiresAuth: true,
   })
 }
