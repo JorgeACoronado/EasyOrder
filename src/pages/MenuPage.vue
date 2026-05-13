@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import ItemCard from '@/components/ItemCard.vue'
 import { useRouter } from 'vue-router'
 import { useCustomerStore } from '@/stores/customerStore'
@@ -11,26 +11,43 @@ const customerStore = useCustomerStore()
 const orderStore = useOrderStore()
 const menuItemStore = useMenuItemStore()
 
+const isLoading = ref(false)
+const errorMessage = ref('')
+
+onMounted(async () => {
+  isLoading.value = true
+
+  try {
+    await menuItemStore.loadMenuItems()
+  } catch (error) {
+    console.error(error)
+    errorMessage.value = 'Could not load menu items.'
+  } finally {
+    isLoading.value = false
+  }
+})
+
 const categories = computed(() => {
   return [...new Set(menuItemStore.menu_items.map((item) => item.category))]
 })
 
-// Category's section refs for smooth scrolling will be made dynamically using the state from the menuItemStore
 const categoryRefs = ref({})
-menuItemStore.menu_items.forEach((item) => {
-  if (!categoryRefs.value[item.category]) {
-    categoryRefs.value[item.category] = ref(null)
-  }
-})
 
-// Scroll to the category section when a dynamic category button is clicked
+function setCategoryRef(category, el) {
+  if (el) {
+    categoryRefs.value[category] = el
+  }
+}
+
 function scrollToCategory(category) {
-  if (!categoryRefs.value[category]) {
+  const section = categoryRefs.value[category]
+
+  if (!section) {
     console.warn(`No ref found for category: ${category}`)
     return
   }
 
-  categoryRefs.value[category].scrollIntoView({
+  section.scrollIntoView({
     behavior: 'smooth',
     block: 'start',
   })
@@ -71,7 +88,7 @@ function goToCart() {
           v-for="category in categories"
           :id="category"
           :key="category"
-          :ref="(el) => (categoryRefs[category] = el)"
+          :ref="(el) => setCategoryRef(category, el)"
           class="mb-10"
         >
           <h2 class="mb-4 font-serif text-3xl text-stone-800">{{ category }}</h2>

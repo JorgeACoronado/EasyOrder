@@ -1,17 +1,9 @@
 import { defineStore } from 'pinia'
+import { getMenuItems } from '@/services/api'
 
 export const useMenuItemStore = defineStore('menuItem', {
   state: () => ({
-    menu_items: [
-      {
-        id: 1,
-        name: 'Carrot Cake',
-        category: 'Desserts',
-        price: 24.99,
-        available: true,
-        image: 'images/carrot_1.jpg',
-      },
-    ],
+    menu_items: [],
   }),
 
   getters: {
@@ -29,6 +21,11 @@ export const useMenuItemStore = defineStore('menuItem', {
   actions: {
     addMenuItem(item) {
       this.menu_items.push(item)
+    },
+
+    async loadMenuItems() {
+      const result = await getMenuItems()
+      this.menu_items = result.data
     },
   },
 })

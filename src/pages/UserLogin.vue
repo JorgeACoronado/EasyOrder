@@ -1,24 +1,31 @@
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore'
+import { loginUser } from '@/services/api'
 
 const router = useRouter()
-const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
+const errorMessage = ref('')
+const isLoading = ref(false)
 
-function submitLogin() {
-  const success = authStore.login(email.value, password.value)
+async function submitLogin() {
+  errorMessage.value = ''
+  isLoading.value = true
 
-  if (!success) {
-    alert('Invalid username or password')
-    return
+  try {
+    await loginUser(email.value, password.value)
+
+    password.value = ''
+    router.push('/management')
+  } catch (error) {
+    console.error(error)
+    errorMessage.value =
+      error?.error?.message || error?.message || 'Login failed. Check your email and password.'
+  } finally {
+    isLoading.value = false
   }
-
-  password.value = ''
-  router.push('/management')
 }
 </script>
 
@@ -57,9 +64,10 @@ function submitLogin() {
 
           <button
             type="submit"
+            :disabled="isLoading"
             class="mt-4 w-full rounded-full bg-pink-400 py-3 text-white"
           >
-            Log In
+            {{ isLoading ? 'Logging in...' : 'Login' }}
           </button>
 
           <div class="space-y-2 text-center text-sm">
@@ -77,6 +85,13 @@ function submitLogin() {
               Back to home
             </RouterLink>
           </div>
+
+          <p
+            v-if="errorMessage"
+            class="mt-2 text-sm text-red-500"
+          >
+            {{ errorMessage }}
+          </p>
         </form>
       </div>
     </div>

@@ -1,30 +1,33 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/authStore'
+import { registerUser } from '@/services/api'
 
 const router = useRouter()
-const authStore = useAuthStore()
 
 const name = ref('')
 const email = ref('')
 const password = ref('')
 
 const userCreated = ref(false)
+const errorMessage = ref('')
+const isLoading = ref(false)
 
-function createUser() {
-  const result = authStore.createUser({
-    name: name.value,
-    email: email.value,
-    password: password.value,
-  })
+async function createUser() {
+  errorMessage.value = ''
+  isLoading.value = true
 
-  if (!result.success) {
-    alert(result.message)
-    return
+  try {
+    await registerUser(name.value, email.value, password.value)
+
+    userCreated.value = true
+    password.value = ''
+  } catch (error) {
+    console.error(error)
+    errorMessage.value = error?.error?.message || error?.message || 'Could not create user.'
+  } finally {
+    isLoading.value = false
   }
-
-  userCreated.value = true
 }
 
 function goToLogin() {
