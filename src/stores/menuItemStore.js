@@ -4,6 +4,8 @@ import { getMenuItems } from '@/services/api'
 export const useMenuItemStore = defineStore('menuItem', {
   state: () => ({
     menu_items: [],
+    isLoading: false,
+    errorMessage: '',
   }),
 
   getters: {
@@ -24,8 +26,18 @@ export const useMenuItemStore = defineStore('menuItem', {
     },
 
     async loadMenuItems() {
-      const result = await getMenuItems()
-      this.menu_items = result.data
+      this.isLoading = true
+      this.errorMessage = ''
+
+      try {
+        const result = await getMenuItems()
+        this.menu_items = result.data || result
+      } catch (error) {
+        console.error(error)
+        this.errorMessage = 'Could not load menu items.'
+      } finally {
+        this.isLoading = false
+      }
     },
   },
 })

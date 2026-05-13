@@ -11,29 +11,46 @@ const orderStore = useOrderStore()
 
 const taxRate = 0.0825
 
+const subtotal = computed(() => {
+  return orderStore.cart.reduce((total, item) => {
+    return total + item.price * item.quantity
+  }, 0)
+})
+
 const tax = computed(() => {
-  return customerStore.subtotal * taxRate
+  return subtotal.value * taxRate
 })
 
 const total = computed(() => {
-  return customerStore.subtotal + tax.value
+  return subtotal.value + tax.value
 })
 
 async function submitOrder() {
+  if (!customerStore.customer_name) {
+    alert('Please enter your name before submitting.')
+    router.push('/cart')
+    return
+  }
+  console.log('ORDER TYPE:', customerStore.selected_payment_method)
+  const orderData = {
+    businessEmail: 'example@user.com',
+    customerName: customerStore.customer_name,
+    customerPhone: customerStore.customer_phone,
+    orderType: customerStore.selected_payment_method || 'pickup',
+    itemsJson: JSON.stringify(orderStore.cart),
+    total: Number(total.value),
+  }
+
+  console.log('ORDER DATA BEING SENT:', orderData)
+
   try {
-    await createOrder({
-      customerName: customerStore.name,
-      customerPhone: customerStore.phone,
-      orderType: customerStore.orderType || 'pickup',
-      itemsJson: JSON.stringify(orderStore.cart),
-      total: Number(total.value),
-    })
+    await createOrder(orderData)
 
     orderStore.clearCart()
     router.push('/thank-you')
   } catch (error) {
     console.error(error)
-    alert(error?.error?.message || 'Could not submit order.')
+    alert(error?.error?.message || error?.message || 'Could not submit order.')
   }
 }
 </script>
@@ -56,7 +73,7 @@ async function submitOrder() {
         <div class="mt-6 space-y-3 rounded-2xl bg-stone-100 p-4">
           <div class="flex justify-between text-sm text-stone-700">
             <span>Subtotal</span>
-            <span>${{ customerStore.subtotal.toFixed(2) }}</span>
+            <span>${{ subtotal.toFixed(2) }}</span>
           </div>
 
           <div class="flex justify-between text-sm text-stone-700">

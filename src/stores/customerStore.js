@@ -5,7 +5,7 @@ export const useCustomerStore = defineStore('customer', {
     orders: [],
     customer_name: '',
     customer_phone: '',
-    selected_payment_method: 'counter',
+    selected_payment_method: 'pickup',
 
     status: 'pending',
 
@@ -33,7 +33,7 @@ export const useCustomerStore = defineStore('customer', {
     clearCustomer() {
       this.customer_name = ''
       this.customer_phone = ''
-      this.selected_payment_method = 'counter'
+      this.selected_payment_method = 'pickup'
       this.status = 'pending'
       this.notes = ''
       this.total = 0

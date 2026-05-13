@@ -11,20 +11,8 @@ const customerStore = useCustomerStore()
 const orderStore = useOrderStore()
 const menuItemStore = useMenuItemStore()
 
-const isLoading = ref(false)
-const errorMessage = ref('')
-
 onMounted(async () => {
-  isLoading.value = true
-
-  try {
-    await menuItemStore.loadMenuItems()
-  } catch (error) {
-    console.error(error)
-    errorMessage.value = 'Could not load menu items.'
-  } finally {
-    isLoading.value = false
-  }
+  await menuItemStore.loadMenuItems()
 })
 
 const categories = computed(() => {
@@ -74,7 +62,7 @@ function goToCart() {
 
           <div class="mt-4 flex flex-wrap justify-between gap-0.5">
             <button
-              v-for="category in Object.keys(categoryRefs)"
+              v-for="category in categories"
               :key="category"
               class="rounded-full bg-pink-100 px-2 py-1 text-sm text-stone-700"
               @click="scrollToCategory(category)"
@@ -84,23 +72,39 @@ function goToCart() {
           </div>
         </header>
 
-        <section
-          v-for="category in categories"
-          :id="category"
-          :key="category"
-          :ref="(el) => setCategoryRef(category, el)"
-          class="mb-10"
+        <p
+          v-if="menuItemStore.isLoading"
+          class="text-center text-sm text-stone-500"
         >
-          <h2 class="mb-4 font-serif text-3xl text-stone-800">{{ category }}</h2>
-          <div class="grid grid-cols-2 gap-4">
-            <ItemCard
-              v-for="item in menuItemStore.itemsByCategory(category)"
-              :key="item.id"
-              :item="item"
-              @add-to-cart="orderStore.addItem"
-            />
-          </div>
-        </section>
+          Loading menu...
+        </p>
+
+        <p
+          v-else-if="menuItemStore.errorMessage"
+          class="text-center text-sm text-red-500"
+        >
+          {{ menuItemStore.errorMessage }}
+        </p>
+
+        <template v-else>
+          <section
+            v-for="category in categories"
+            :id="category"
+            :key="category"
+            :ref="(el) => setCategoryRef(category, el)"
+            class="mb-10"
+          >
+            <h2 class="mb-4 font-serif text-3xl text-stone-800">{{ category }}</h2>
+            <div class="grid grid-cols-2 gap-4">
+              <ItemCard
+                v-for="item in menuItemStore.itemsByCategory(category)"
+                :key="item.id"
+                :item="item"
+                @add-to-cart="orderStore.addItem"
+              />
+            </div>
+          </section>
+        </template>
       </div>
 
       <button

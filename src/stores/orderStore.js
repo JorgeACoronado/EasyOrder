@@ -1,10 +1,12 @@
-import { getOrders } from '@/services/api'
+import { getOrders, createOrder } from '@/services/api'
 import { defineStore } from 'pinia'
 
 export const useOrderStore = defineStore('order', {
   state: () => ({
     cart: [],
     orders: [],
+    isLoading: false,
+    errorMessage: '',
   }),
 
   getters: {
@@ -21,9 +23,19 @@ export const useOrderStore = defineStore('order', {
 
   actions: {
     async loadOrders() {
-      const result = await getOrders()
-      this.orders = result.data
-    },
+      this.isLoading = true
+      this.errorMessage = ''
+
+      try {
+        const result = await getOrders()
+        this.orders = result.data || result
+      } catch (error) {
+        console.error(error)
+        this.errorMessage = 'Could not load orders.'
+      } finally {
+        this.isLoading = false
+      }
+    }
 
     addItem(item) {
       const existingItem = this.cart.find((cartItem) => cartItem.id === item.id)
@@ -64,6 +76,33 @@ export const useOrderStore = defineStore('order', {
 
     clearCart() {
       this.cart = []
+    },
+
+    async submitOrder(orderData) {
+      this.isLoading = true
+      this.errorMessage = ''
+
+      try {
+        const result = await createOrder(orderData)
+
+        this.clearCart()
+
+        return {
+          success: true,
+          data: result.data || result,
+        }
+      } catch (error) {
+        console.error(error)
+
+        this.errorMessage = error?.error?.message || error?.message || 'Could not submit order.'
+
+        return {
+          success: false,
+          message: this.errorMessage,
+        }
+      } finally {
+        this.isLoading = false
+      }
     },
   },
 })
