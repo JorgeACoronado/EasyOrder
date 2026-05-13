@@ -7,29 +7,30 @@ const menuItemStore = useMenuItemStore()
 const name = ref('')
 const category = ref('')
 const price = ref('')
-const imageUrl = ref('')
+const image_url = ref('')
 const available = ref(true)
 
-function addMenuItem() {
-  if (!name.value || !category.value || !price.value) {
-    alert('Please fill in name, category, and price.')
-    return
+async function submitMenuItem() {
+  try {
+    await menuItemStore.addMenuItem({
+      name: name.value,
+      category: category.value,
+      price: Number(price.value),
+      available: available.value,
+      image_url: image_url.value || null,
+    })
+
+    name.value = ''
+    category.value = ''
+    price.value = ''
+    image_url.value = ''
+    available.value = true
+
+    alert('Menu item added!')
+  } catch (error) {
+    console.error(error)
+    alert(error?.error?.message || 'Could not add menu item.')
   }
-
-  menuItemStore.addMenuItem({
-    id: crypto.randomUUID(),
-    name: name.value,
-    category: category.value,
-    price: Number(price.value),
-    available: available.value,
-    image_url: imageUrl.value,
-  })
-
-  name.value = ''
-  category.value = ''
-  price.value = ''
-  imageUrl.value = ''
-  available.value = true
 }
 </script>
 
@@ -51,7 +52,7 @@ function addMenuItem() {
 
       <form
         class="space-y-4 rounded-3xl bg-white p-5 shadow-lg"
-        @submit.prevent="addMenuItem"
+        @submit.prevent="submitMenuItem"
       >
         <div>
           <label class="mb-1 block text-sm font-medium text-stone-700"> Item Name </label>

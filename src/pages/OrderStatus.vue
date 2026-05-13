@@ -1,15 +1,21 @@
 <script setup>
-import { computed } from 'vue'
-import { useCustomerStore } from '@/stores/customerStore'
+import { computed, onMounted } from 'vue'
+import { useOrderStore } from '@/stores/orderStore'
 
-const customerStore = useCustomerStore()
+const orderStore = useOrderStore()
+
+onMounted(async () => {
+  await orderStore.loadOrders()
+})
 
 const completedOrders = computed(() => {
-  return customerStore.orders.filter((order) => order.status === 'completed')
+  return orderStore.orders.filter((order) => order.status === 'completed')
 })
 
 const inProgressOrders = computed(() => {
-  return customerStore.orders.filter((order) => order.status === 'in-progress')
+  return orderStore.orders.filter(
+    (order) => order.status === 'pending' || order.status === 'in_progress',
+  )
 })
 </script>
 

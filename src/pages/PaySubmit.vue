@@ -2,9 +2,12 @@
 import { computed } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useCustomerStore } from '@/stores/customerStore'
+import { useOrderStore } from '@/stores/orderStore'
+import { createOrder } from '@/services/api'
 
 const router = useRouter()
 const customerStore = useCustomerStore()
+const orderStore = useOrderStore()
 
 const taxRate = 0.0825
 
@@ -16,14 +19,22 @@ const total = computed(() => {
   return customerStore.subtotal + tax.value
 })
 
-function submitPayment() {
-  customerStore.selected_payment_method = 'cash'
-  customerStore.tax = tax.value
-  customerStore.total = total.value
-  customerStore.status = 'pending'
-  customerStore.submitOrder()
+async function submitOrder() {
+  try {
+    await createOrder({
+      customerName: customerStore.name,
+      customerPhone: customerStore.phone,
+      orderType: customerStore.orderType || 'pickup',
+      itemsJson: JSON.stringify(orderStore.cart),
+      total: Number(total.value),
+    })
 
-  router.push('/thank-you')
+    orderStore.clearCart()
+    router.push('/thank-you')
+  } catch (error) {
+    console.error(error)
+    alert(error?.error?.message || 'Could not submit order.')
+  }
 }
 </script>
 
@@ -80,7 +91,7 @@ function submitPayment() {
 
         <button
           class="mt-6 w-full rounded-full bg-pink-400 px-4 py-3 font-medium text-white"
-          @click="submitPayment"
+          @click="submitOrder"
         >
           Submit Order
         </button>

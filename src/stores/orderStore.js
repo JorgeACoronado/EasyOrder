@@ -1,8 +1,10 @@
+import { getOrders } from '@/services/api'
 import { defineStore } from 'pinia'
 
 export const useOrderStore = defineStore('order', {
   state: () => ({
     cart: [],
+    orders: [],
   }),
 
   getters: {
@@ -18,6 +20,11 @@ export const useOrderStore = defineStore('order', {
   },
 
   actions: {
+    async loadOrders() {
+      const result = await getOrders()
+      this.orders = result.data
+    },
+
     addItem(item) {
       const existingItem = this.cart.find((cartItem) => cartItem.id === item.id)
 
@@ -53,6 +60,10 @@ export const useOrderStore = defineStore('order', {
 
     removeFromCart(id) {
       this.cart = this.cart.filter((item) => item.id !== id)
+    },
+
+    clearCart() {
+      this.cart = []
     },
   },
 })

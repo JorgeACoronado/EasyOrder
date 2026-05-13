@@ -53,6 +53,17 @@ export async function getMenuItems() {
   return apiFetch('/menu-items')
 }
 
+export async function getOrders() {
+  return apiFetch('/orders')
+}
+
+export async function createMenuItem(item) {
+  return apiFetch('/menu-items', {
+    method: 'POST',
+    body: JSON.stringify(item),
+  })
+}
+
 export async function createOrder(order) {
   return apiFetch('/orders', {
     method: 'POST',

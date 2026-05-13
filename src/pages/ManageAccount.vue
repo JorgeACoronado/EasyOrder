@@ -12,6 +12,9 @@ const owner = {
 }
 
 function logout() {
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('refreshToken')
+
   router.push('/login')
 }
 </script>
