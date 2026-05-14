@@ -48,14 +48,14 @@ function logout() {
 
         <div class="grid gap-3">
           <RouterLink
-            to="/business-settings"
+            to="/businessSettings"
             class="rounded-2xl bg-pink-100 px-4 py-3 text-center text-stone-700"
           >
             Edit Business Settings
           </RouterLink>
 
           <RouterLink
-            to="/orders"
+            to="/viewOrders"
             class="rounded-2xl bg-amber-100 px-4 py-3 text-center text-stone-700"
           >
             View Customer Orders

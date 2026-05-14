@@ -1,11 +1,17 @@
 <script setup>
 import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useOrderStore } from '@/stores/orderStore'
 
+const route = useRoute()
 const orderStore = useOrderStore()
 
 onMounted(async () => {
-  await orderStore.loadOrders()
+  await orderStore.loadPublicOrders()
+})
+
+const currentOrderNumber = computed(() => {
+  return route.query.order
 })
 
 const completedOrders = computed(() => {
@@ -14,7 +20,8 @@ const completedOrders = computed(() => {
 
 const inProgressOrders = computed(() => {
   return orderStore.orders.filter(
-    (order) => order.status === 'pending' || order.status === 'in_progress',
+    (order) =>
+      order.status === 'pending' || order.status === 'preparing' || order.status === 'ready',
   )
 })
 </script>
@@ -38,7 +45,16 @@ const inProgressOrders = computed(() => {
       <section class="mb-6 rounded-[22px] bg-white p-4 shadow-md">
         <h2 class="mb-4 font-serif text-4xl text-green-500">Completed</h2>
 
-        <div
+        <!--temporary version 1-------------------------------------->
+        <p
+          v-if="currentOrderNumber"
+          class="mb-4 rounded-xl px-4 py-3 text-sm text-stone-700"
+        >
+          order# {{ currentOrderNumber }}
+        </p>
+        <!---------------------------------------------------------->
+
+        <!-- <div
           v-if="completedOrders.length === 0"
           class="text-sm text-stone-400"
         >
@@ -53,7 +69,7 @@ const inProgressOrders = computed(() => {
           >
             #{{ order.order_number }}
           </span>
-        </div>
+        </div> -->
       </section>
 
       <section class="rounded-[22px] bg-white p-4 shadow-md">

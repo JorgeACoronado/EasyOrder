@@ -30,12 +30,36 @@ export const useOrderStore = defineStore('order', {
         const result = await getOrders()
         this.orders = result.data || result
       } catch (error) {
-        console.error(error)
-        this.errorMessage = 'Could not load orders.'
+        console.error('LOAD ORDERS ERROR:', error)
+
+        this.errorMessage = error?.error?.message || error?.message || 'Could not load orders.'
       } finally {
         this.isLoading = false
       }
-    }
+    },
+
+    async loadPublicOrders() {
+      this.isLoading = true
+      this.errorMessage = ''
+
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/public/orders/status`)
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Could not load order status.')
+        }
+
+        this.orders = data.data
+      } catch (error) {
+        console.error(error)
+
+        this.errorMessage = error?.message || 'Could not load order status.'
+      } finally {
+        this.isLoading = false
+      }
+    },
 
     addItem(item) {
       const existingItem = this.cart.find((cartItem) => cartItem.id === item.id)

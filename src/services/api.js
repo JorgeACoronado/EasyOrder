@@ -1,5 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
+export const BUSINESS_EMAIL = 'example@user.com'
+
 function getToken() {
   return localStorage.getItem('accessToken')
 }
@@ -65,14 +67,14 @@ export async function createOrder(order) {
 
 // This is a protected admin route
 export async function getOrders() {
-  return apiFetch('/orders', {
+  return apiFetch('/admin/orders', {
     requiresAuth: true,
   })
 }
 
 // This is a protected admin route
 export async function createMenuItem(item) {
-  return apiFetch('/menu-items', {
+  return apiFetch('/admin/menu-items', {
     method: 'POST',
     body: JSON.stringify(item),
     requiresAuth: true,

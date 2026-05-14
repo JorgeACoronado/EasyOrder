@@ -21,8 +21,25 @@ export const useMenuItemStore = defineStore('menuItem', {
   },
 
   actions: {
-    addMenuItem(item) {
-      this.menu_items.push(item)
+    async addMenuItem(item) {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/menu-items`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify(item),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw data
+      }
+
+      this.menu_items.push(data.data || data)
+
+      return data
     },
 
     async loadMenuItems() {

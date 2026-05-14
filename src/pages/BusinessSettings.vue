@@ -17,7 +17,6 @@ async function submitMenuItem() {
       category: category.value,
       price: Number(price.value),
       available: available.value,
-      image_url: image_url.value || null,
     })
 
     name.value = ''
@@ -32,6 +31,68 @@ async function submitMenuItem() {
     alert(error?.error?.message || 'Could not add menu item.')
   }
 }
+
+async function resetDemoData() {
+  if (!confirm('Reset demo menu items?')) return
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/reset-demo`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    })
+
+    let data = {}
+
+    try {
+      data = await response.json()
+    } catch {
+      data = {}
+    }
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Could not reset demo data.')
+    }
+
+    await menuItemStore.loadMenuItems()
+
+    alert('Demo data reset!')
+  } catch (error) {
+    console.error(error)
+    alert(error.message || 'Could not reset demo data.')
+  }
+}
+
+async function resetOrders() {
+  if (!confirm('Delete/reset all orders?')) return
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/reset-orders`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    })
+
+    let data = {}
+
+    try {
+      data = await response.json()
+    } catch {
+      data = {}
+    }
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Could not reset orders.')
+    }
+
+    alert('Orders reset!')
+  } catch (error) {
+    console.error(error)
+    alert(error.message || 'Could not reset orders.')
+  }
+}
 </script>
 
 <template>
@@ -39,8 +100,10 @@ async function submitMenuItem() {
     <div class="mx-auto w-full max-w-[430px]">
       <header class="mb-6">
         <h1 class="font-serif text-3xl text-stone-800">Business Settings</h1>
+
         <div class="flex items-center justify-between">
           <p class="text-sm text-stone-500">Add new items to your menu.</p>
+
           <RouterLink
             to="/management"
             class="text-sm text-stone-500 underline"
@@ -67,6 +130,7 @@ async function submitMenuItem() {
 
         <div>
           <label class="mb-1 block text-sm font-medium text-stone-700"> Category </label>
+
           <input
             v-model="category"
             type="text"
@@ -77,6 +141,7 @@ async function submitMenuItem() {
 
         <div>
           <label class="mb-1 block text-sm font-medium text-stone-700"> Price </label>
+
           <input
             v-model="price"
             type="number"
@@ -89,8 +154,9 @@ async function submitMenuItem() {
 
         <div>
           <label class="mb-1 block text-sm font-medium text-stone-700"> Image URL </label>
+
           <input
-            v-model="imageUrl"
+            v-model="image_url"
             type="text"
             class="w-full rounded-xl border border-stone-300 px-3 py-2 outline-none focus:border-stone-500"
             placeholder="/images/cake.jpg"
@@ -103,6 +169,7 @@ async function submitMenuItem() {
             type="checkbox"
             class="h-4 w-4"
           />
+
           Available
         </label>
 
@@ -113,6 +180,28 @@ async function submitMenuItem() {
           Add Menu Item
         </button>
       </form>
+
+      <section class="mt-6 rounded-3xl bg-white p-5 shadow-lg">
+        <h2 class="mb-3 font-serif text-2xl text-stone-800">Demo Tools</h2>
+
+        <div class="space-y-3">
+          <button
+            type="button"
+            class="w-full rounded-2xl bg-amber-500 py-3 font-semibold text-white shadow-md active:scale-[0.98]"
+            @click="resetDemoData"
+          >
+            Reset Demo Menu
+          </button>
+
+          <button
+            type="button"
+            class="w-full rounded-2xl bg-red-500 py-3 font-semibold text-white shadow-md active:scale-[0.98]"
+            @click="resetOrders"
+          >
+            Reset Orders
+          </button>
+        </div>
+      </section>
 
       <section class="mt-6 rounded-3xl bg-white p-5 shadow-lg">
         <h2 class="mb-3 font-serif text-2xl text-stone-800">Current Menu Items</h2>

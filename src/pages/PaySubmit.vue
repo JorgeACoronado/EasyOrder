@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useCustomerStore } from '@/stores/customerStore'
 import { useOrderStore } from '@/stores/orderStore'
-import { createOrder } from '@/services/api'
+import { BUSINESS_EMAIL, createOrder } from '@/services/api'
 
 const router = useRouter()
 const customerStore = useCustomerStore()
@@ -33,7 +33,7 @@ async function submitOrder() {
   }
   console.log('ORDER TYPE:', customerStore.selected_payment_method)
   const orderData = {
-    businessEmail: 'example@user.com',
+    businessEmail: BUSINESS_EMAIL,
     customerName: customerStore.customer_name,
     customerPhone: customerStore.customer_phone,
     orderType: customerStore.selected_payment_method || 'pickup',
@@ -44,10 +44,20 @@ async function submitOrder() {
   console.log('ORDER DATA BEING SENT:', orderData)
 
   try {
-    await createOrder(orderData)
+    const result = await createOrder(orderData)
+
+    const createdOrder = result.data || result
+
+    const orderNumber = createdOrder.order_number || createdOrder.orderNumber || createdOrder.id
 
     orderStore.clearCart()
-    router.push('/thank-you')
+
+    router.push({
+      path: '/status',
+      query: {
+        order: orderNumber,
+      },
+    })
   } catch (error) {
     console.error(error)
     alert(error?.error?.message || error?.message || 'Could not submit order.')
